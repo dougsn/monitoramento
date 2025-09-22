@@ -39,9 +39,9 @@ public class StatusServiceImpl implements StatusService {
     public PagedModel<EntityModel<AllStatus>> findAll(Pageable pageable) {
         logger.info("Buscando os status.");
 
-        var assistente = repository.findAll(pageable);
+        var status = repository.findAll(pageable);
 
-        var dtoList = assistente.map(u -> dataMapper.apply(u));
+        var dtoList = status.map(u -> dataMapper.apply(u));
         dtoList.forEach(u -> u.add(linkTo(methodOn(StatusController.class).findById(u.getId())).withSelfRel()));
 
         Link link = linkTo(methodOn(StatusController.class)
