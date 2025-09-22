@@ -1,7 +1,6 @@
 package com.monitoramento.dto.generic_entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
@@ -21,8 +20,11 @@ public class LogEntityDto {
 
     @NotNull(message = "O campo [dia] não pode ser vazio.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    @Column(name = "dia")
     private LocalDate dia;
+
+    @NotNull(message = "O campo [acao] não pode ser vazio.")
+    @Size(max = 10, message = "o campo [acao] tem que possuir no máximo 10 caracteres.")
+    private String acao;
 
     @Size(max = 100, message = "o campo [statusNovo] tem que possuir no máximo 100 caracteres.")
     private String statusNovo;

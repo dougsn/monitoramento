@@ -2,12 +2,14 @@ package com.monitoramento.service.impl.dvr;
 
 import com.monitoramento.controller.DvrController;
 import com.monitoramento.dto.dvr.*;
+import com.monitoramento.dto.log.dvr.AddLogStatusDvr;
 import com.monitoramento.model.dvr.Dvr;
 import com.monitoramento.repository.dvr.DvrRepository;
 import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
 import com.monitoramento.service.interfaces.dvr.DvrService;
+import com.monitoramento.service.interfaces.log.dvr.LogStatusDvrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -16,6 +18,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -29,6 +32,8 @@ public class DvrServiceImpl implements DvrService {
     private DvrRepository repository;
     @Autowired
     private StatusRepository statusRepository;
+    @Autowired
+    private LogStatusDvrService logDvr;
     @Autowired
     private DvrDTOMapper mapper;
     @Autowired
@@ -73,8 +78,19 @@ public class DvrServiceImpl implements DvrService {
         var dvr = new Dvr();
         dvr.setNome(data.getNome());
         dvr.setStatus(status);
+        repository.save(dvr);
 
-        return mapper.apply(repository.save(dvr));
+        var log = new AddLogStatusDvr();
+        log.setDia(LocalDate.now());
+        log.setAcao("CREATE");
+        log.setStatusNovo(dvr.getStatus().getNome());
+        log.setStatusAntigo("");
+        log.setNomeNovo(dvr.getNome());
+        log.setNomeAntigo("");
+        log.setIdDvr(dvr.getId());
+        logDvr.add(log);
+
+        return mapper.apply(dvr);
     }
 
     @Override
@@ -87,6 +103,17 @@ public class DvrServiceImpl implements DvrService {
         var dvrExistente = repository.findById(data.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("O dvr de id: " + data.getId() + " não foi encontrado para ser atualizado."));
 
+        var log = new AddLogStatusDvr();
+        log.setDia(data.getDia() == null ? LocalDate.now() : data.getDia());
+        log.setAcao("UPDATE");
+        log.setStatusNovo(status.getNome());
+        log.setStatusAntigo(dvrExistente.getStatus().getNome());
+        log.setNomeNovo(data.getNome());
+        log.setNomeAntigo(dvrExistente.getNome());
+        log.setIdDvr(dvrExistente.getId());
+        logDvr.add(log);
+
+
         dvrExistente.setNome(data.getNome());
         dvrExistente.setStatus(status);
 
@@ -98,6 +125,8 @@ public class DvrServiceImpl implements DvrService {
         logger.info("Excluindo o dvr de id: " + id);
         var dvr = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Dvr id: " + id + " não foi encontrada para ser deletado!"));
+
+        logDvr.deleteAllByDvr(id);
         repository.delete(dvr);
         return true;
     }

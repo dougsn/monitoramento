@@ -20,6 +20,9 @@ public class LogEntity extends GenericEntity {
     @Column(name = "dia")
     private LocalDate dia;
 
+    @Column(name = "acao")
+    private String acao;
+
     @Column(name = "status_novo")
     private String statusNovo;
 
@@ -33,9 +36,10 @@ public class LogEntity extends GenericEntity {
     private String nomeAntigo;
 
     public LogEntity(Long id, String createdBy, String updatedBy, LocalDateTime createdAt, LocalDateTime updatedAt,
-                     LocalDate dia, String statusNovo, String statusAntigo, String nomeNovo, String nomeAntigo) {
+                     LocalDate dia, String acao, String statusNovo, String statusAntigo, String nomeNovo, String nomeAntigo) {
         super(id, createdBy, updatedBy, createdAt, updatedAt);
         this.dia = dia;
+        this.acao = acao;
         this.statusNovo = statusNovo;
         this.statusAntigo = statusAntigo;
         this.nomeNovo = nomeNovo;
