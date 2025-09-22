@@ -4,6 +4,7 @@ import com.monitoramento.controller.DvrController;
 import com.monitoramento.dto.dvr.*;
 import com.monitoramento.dto.log.dvr.AddLogStatusDvr;
 import com.monitoramento.model.dvr.Dvr;
+import com.monitoramento.repository.camera.CameraRepository;
 import com.monitoramento.repository.dvr.DvrRepository;
 import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
@@ -32,6 +33,8 @@ public class DvrServiceImpl implements DvrService {
     private DvrRepository repository;
     @Autowired
     private StatusRepository statusRepository;
+    @Autowired
+    private CameraRepository cameraRepository;
     @Autowired
     private LogStatusDvrService logDvr;
     @Autowired
@@ -125,6 +128,9 @@ public class DvrServiceImpl implements DvrService {
         logger.info("Excluindo o dvr de id: " + id);
         var dvr = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Dvr id: " + id + " não foi encontrada para ser deletado!"));
+
+        if (!cameraRepository.findAllByDvrId(id).isEmpty())
+            throw new DataIntegratyViolationException("O dvr não pode ser deletado, pois existem câmeras vinculadas!");
 
         logDvr.deleteAllByDvr(id);
         repository.delete(dvr);
