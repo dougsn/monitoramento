@@ -3,6 +3,8 @@ package com.monitoramento.service.impl.status;
 import com.monitoramento.controller.StatusController;
 import com.monitoramento.dto.status.*;
 import com.monitoramento.model.status.Status;
+import com.monitoramento.repository.camera.CameraRepository;
+import com.monitoramento.repository.dvr.DvrRepository;
 import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
@@ -28,6 +30,10 @@ public class StatusServiceImpl implements StatusService {
     private StatusRepository repository;
     @Autowired
     private StatusDTOMapper mapper;
+    @Autowired
+    private DvrRepository dvrRepository;
+    @Autowired
+    private CameraRepository cameraRepository;
 
     @Autowired
     private DataStatusDTOMapper dataMapper;
@@ -91,6 +97,13 @@ public class StatusServiceImpl implements StatusService {
         logger.info("Excluindo o status de id: " + id);
         var status = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Status id: " + id + " não foi encontrada para ser deletado!"));
+
+        if (!cameraRepository.findAllByStatusId(id).isEmpty())
+            throw new DataIntegratyViolationException("O status não pode ser deletado, pois existem câmeras vinculadas!");
+
+        if (!dvrRepository.findAllByStatusId(id).isEmpty())
+            throw new DataIntegratyViolationException("O status não pode ser deletado, pois existem dvrs vinculados!");
+
         repository.delete(status);
         return true;
     }

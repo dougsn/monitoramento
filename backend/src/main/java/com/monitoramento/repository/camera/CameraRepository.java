@@ -17,7 +17,9 @@ public interface CameraRepository extends JpaRepository<Camera, Long> {
     @Transactional(readOnly = true)
     Optional<Camera> findByNomeAndDvrId(String nome, Long dvrId);
 
-
     @Transactional(readOnly = true)
     List<Camera> findAllByDvrId(Long dvrId);
+
+    @Transactional(readOnly = true)
+    List<Camera> findAllByStatusId(Long statusId);
 }
