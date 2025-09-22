@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,11 +24,15 @@ public class LogEntityDto {
     @Column(name = "dia")
     private LocalDate dia;
 
+    @Size(max = 100, message = "o campo [statusNovo] tem que possuir no máximo 100 caracteres.")
     private String statusNovo;
 
+    @Size(max = 100, message = "o campo [statusAntigo] tem que possuir no máximo 100 caracteres.")
     private String statusAntigo;
 
+    @Size(max = 100, message = "o campo [nomeNovo] tem que possuir no máximo 100 caracteres.")
     private String nomeNovo;
 
+    @Size(max = 100, message = "o campo [nomeAntigo] tem que possuir no máximo 100 caracteres.")
     private String nomeAntigo;
 }
