@@ -16,10 +16,7 @@ import java.time.LocalDate;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class RelatorioEntityDto {
-    private Long id;
-
     @NotNull(message = "O campo [dia] não pode ser vazio.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    @Column(name = "dia")
     private LocalDate dia;
 }
