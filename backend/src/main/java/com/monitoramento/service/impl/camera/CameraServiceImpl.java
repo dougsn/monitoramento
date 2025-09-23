@@ -2,6 +2,7 @@ package com.monitoramento.service.impl.camera;
 
 import com.monitoramento.controller.CameraController;
 import com.monitoramento.dto.camera.*;
+import com.monitoramento.dto.log.camera.AddLogStatusCamera;
 import com.monitoramento.model.camera.Camera;
 import com.monitoramento.repository.camera.CameraRepository;
 import com.monitoramento.repository.dvr.DvrRepository;
@@ -9,6 +10,7 @@ import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
 import com.monitoramento.service.interfaces.camera.CameraService;
+import com.monitoramento.service.interfaces.log.camera.LogStatusCameraService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -17,6 +19,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -33,8 +36,8 @@ public class CameraServiceImpl implements CameraService {
     private StatusRepository statusRepository;
     @Autowired
     private DvrRepository dvrRepository;
-    //    @Autowired
-    //    private LogStatusCameraService logCamera;
+    @Autowired
+    private LogStatusCameraService logCamera;
     @Autowired
     private CameraDTOMapper mapper;
     @Autowired
@@ -93,15 +96,15 @@ public class CameraServiceImpl implements CameraService {
         camera.setDvr(dvr);
         repository.save(camera);
 
-//        var log = new AddLogStatusCamera();
-//        log.setDia(LocalDate.now());
-//        log.setAcao("CREATE");
-//        log.setStatusNovo(dvr.getStatus().getNome());
-//        log.setStatusAntigo("");
-//        log.setNomeNovo(dvr.getNome());
-//        log.setNomeAntigo("");
-//        log.setIdCamera(dvr.getId());
-//        logCamera.add(log);
+        var log = new AddLogStatusCamera();
+        log.setDia(LocalDate.now());
+        log.setAcao("CREATE");
+        log.setStatusNovo(camera.getStatus().getNome());
+        log.setStatusAntigo("");
+        log.setNomeNovo(camera.getNome());
+        log.setNomeAntigo("");
+        log.setIdCamera(camera.getId());
+        logCamera.add(log);
 
         return mapper.apply(camera);
     }
@@ -118,15 +121,15 @@ public class CameraServiceImpl implements CameraService {
         var cameraExistente = repository.findById(data.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("A câmera de id: " + data.getId() + " não foi encontrado para ser atualizado."));
 
-//        var log = new AddLogStatusCamera();
-//        log.setDia(data.getDia() == null ? LocalDate.now() : data.getDia());
-//        log.setAcao("UPDATE");
-//        log.setStatusNovo(status.getNome());
-//        log.setStatusAntigo(cameraExistente.getStatus().getNome());
-//        log.setNomeNovo(data.getNome());
-//        log.setNomeAntigo(cameraExistente.getNome());
-//        log.setIdCamera(cameraExistente.getId());
-//        logCamera.add(log);
+        var log = new AddLogStatusCamera();
+        log.setDia(data.getDia() == null ? LocalDate.now() : data.getDia());
+        log.setAcao("UPDATE");
+        log.setStatusNovo(status.getNome());
+        log.setStatusAntigo(cameraExistente.getStatus().getNome());
+        log.setNomeNovo(data.getNome());
+        log.setNomeAntigo(cameraExistente.getNome());
+        log.setIdCamera(cameraExistente.getId());
+        logCamera.add(log);
 
 
         cameraExistente.setNome(data.getNome());
@@ -143,7 +146,7 @@ public class CameraServiceImpl implements CameraService {
         var camera = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Câmera id: " + id + " não foi encontrada para ser deletado!"));
 
-//        logCamera.deleteAllByCamera(id);
+        logCamera.deleteAllByCamera(id);
         repository.delete(camera);
         return true;
     }
