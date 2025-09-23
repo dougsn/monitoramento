@@ -135,10 +135,10 @@ public class DvrRelatorioServiceImpl implements DvrRelatorioService {
     }
 
     private void validUpdateDvrRelatorio(LocalDate dia, Long id, Long dvrId) {
-        var cameraByNomeAndDvr = repository.findByDiaAndDvrId(dia, dvrId);
+        var relatorioByDiaAndDvr = repository.findByDiaAndDvrId(dia, dvrId);
 
-        if (cameraByNomeAndDvr.isPresent() && !cameraByNomeAndDvr.get().getId().equals(id))
-            throw new DataIntegratyViolationException("O relatório do dia: " + dia + " já foi cadastrado no dvr: " + cameraByNomeAndDvr.get().getDvr().getNome() + ".");
+        if (relatorioByDiaAndDvr.isPresent() && !relatorioByDiaAndDvr.get().getId().equals(id))
+            throw new DataIntegratyViolationException("O relatório do dia: " + dia + " já foi cadastrado no dvr: " + relatorioByDiaAndDvr.get().getDvr().getNome() + ".");
     }
 
 }
