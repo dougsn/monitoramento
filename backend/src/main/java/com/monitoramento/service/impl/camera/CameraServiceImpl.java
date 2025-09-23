@@ -146,6 +146,8 @@ public class CameraServiceImpl implements CameraService {
         var camera = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Câmera id: " + id + " não foi encontrada para ser deletado!"));
 
+        // TODO - Verificar na exclusão o vinculo com CameraRelatorio, se tiver, não deixar excluir.
+
         logCamera.deleteAllByCamera(id);
         repository.delete(camera);
         return true;

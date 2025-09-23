@@ -132,6 +132,8 @@ public class DvrServiceImpl implements DvrService {
         if (!cameraRepository.findAllByDvrId(id).isEmpty())
             throw new DataIntegratyViolationException("O dvr não pode ser deletado, pois existem câmeras vinculadas!");
 
+        // TODO - Verificar na exclusão o vinculo com DvrRelatorio e CameraRelatorio, se tiver, não deixar excluir.
+
         logDvr.deleteAllByDvr(id);
         repository.delete(dvr);
         return true;

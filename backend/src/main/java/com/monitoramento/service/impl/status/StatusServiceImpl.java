@@ -104,6 +104,8 @@ public class StatusServiceImpl implements StatusService {
         if (!dvrRepository.findAllByStatusId(id).isEmpty())
             throw new DataIntegratyViolationException("O status não pode ser deletado, pois existem dvrs vinculados!");
 
+        // TODO - Verificar na exclusão o vinculo com DvrRelatorio e CameraRelatorio, se tiver, não deixar excluir.
+
         repository.delete(status);
         return true;
     }
