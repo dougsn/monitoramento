@@ -1,9 +1,12 @@
 import {
   Box,
   Button,
+  ButtonGroup,
   Flex,
   Heading,
   Icon,
+  IconButton,
+  Pagination,
   Table,
   useMediaQuery,
 } from "@chakra-ui/react";
@@ -14,24 +17,33 @@ import { toaster } from "../../components/ui/toaster";
 import api from "../../services/api";
 import { Alert } from "../../components/ui/alert";
 import { SkeletonTable } from "../../components/ui/skeleton";
-import { formatNumberFrag } from "../../utils/formatNumberFrag";
 import { RiAddLine } from "react-icons/ri";
 import { HeadingTitle } from "../../components/ui/heading";
+import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { AppPagination } from "../../components/ui/pagination";
 
-export const Colaborador = () => {
-  const [colaborador, setColaborador] = useState([]);
+export const Status = () => {
+  const [status, setStatus] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [erro, setErro] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
+  const [pageInfo, setPageInfo] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
   const navigate = useNavigate();
   const [isLargerThan768] = useMediaQuery("(max-width: 768px)");
 
-  const getColaborador = async () => {
+  const getStatus = async () => {
+    setIsLoading(true);
     try {
-      const request = await api.get("/api/colaborador");
-      setColaborador(request.data);
-      if (request.data.length === 0) {
+      const request = await api.get(`/api/status`);
+      const responseData = request.data;
+
+      setStatus(responseData._embedded.allStatusList);
+      setPageInfo(responseData.page);
+
+      if (responseData._embedded.allStatusList.length === 0) {
         setIsEmpty(true);
       }
       setTimeout(() => {
@@ -51,28 +63,35 @@ export const Colaborador = () => {
   };
 
   const handleDeletionSuccess = (deletedId) => {
-    setColaborador((prevColaboradores) =>
-      prevColaboradores.filter((c) => c.id !== deletedId)
-    );
+    setStatus((prevStatus) => prevStatus.filter((c) => c.id !== deletedId));
   };
 
   useEffect(() => {
-    getColaborador();
+    getStatus(currentPage);
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, []);
+  }, [currentPage]);
+
+  const handlePageChange = (details) => {
+    setCurrentPage(details.page - 1);
+  };
 
   return (
     <Box display={"flex"} flexDirection={"column"} p="8" w={"100%"}>
       {isLargerThan768 ? (
         <Flex mb="8" justify="space-around" align="center">
-          <HeadingTitle name={"Colaboradores"} />
+          <HeadingTitle name={"Status"} />
           <Button
+            _dark={{
+              bg: "blue.700",
+              color: "white",
+              _hover: { bg: "blue.600" },
+            }}
             size="xs"
             fontSize="sm"
-            onClick={() => navigate("/colaborador/novo/")}
+            onClick={() => navigate("/status/novo/")}
             colorPalette={"blue"}
           >
             <Icon as={RiAddLine} />
@@ -80,10 +99,15 @@ export const Colaborador = () => {
         </Flex>
       ) : (
         <Flex mb="8" justify="space-between" align="center">
-          <HeadingTitle name={"Colaboradores"} />
+          <HeadingTitle name={"Status"} />
           <Button
+            _dark={{
+              bg: "blue.700",
+              color: "white",
+              _hover: { bg: "blue.600" },
+            }}
             colorPalette={"blue"}
-            onClick={() => navigate("/colaborador/novo/")}
+            onClick={() => navigate("/status/novo/")}
           >
             Criar novo
           </Button>
@@ -95,14 +119,14 @@ export const Colaborador = () => {
       ) : erro ? (
         <Alert
           status="error"
-          title="Falha ao obter dados dos colaboradores"
+          title="Falha ao obter dados dos status"
           children={"Tente novamente mais tarde"}
         />
       ) : isEmpty ? (
         <Alert
           status="info"
           title="Não há dados"
-          children={"Cadastre um novo colaborador"}
+          children={"Cadastre um novo status"}
         />
       ) : (
         <>
@@ -116,27 +140,21 @@ export const Colaborador = () => {
               <Table.Header>
                 <Table.Row>
                   <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                  <Table.ColumnHeader>Salário</Table.ColumnHeader>
-                  <Table.ColumnHeader>Desconto</Table.ColumnHeader>
+                  <Table.ColumnHeader>Cor</Table.ColumnHeader>
                   <Table.ColumnHeader textAlign="end">Ações</Table.ColumnHeader>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {colaborador.map((item) => (
+                {status.map((item) => (
                   <Table.Row fontWeight={"semibold"} key={item.id}>
                     <Table.Cell data-label="Nome:">{item.nome}</Table.Cell>
-                    <Table.Cell data-label="Salário:">
-                      {formatNumberFrag(item.salario)}
-                    </Table.Cell>
-                    <Table.Cell data-label="Desconto:">
-                      {item.descontoVt ? "Sim" : "Não"}
-                    </Table.Cell>
+                    <Table.Cell data-label="Desconto:">{item.cor}</Table.Cell>
                     <ActionButtonsCell
                       id={item.id}
-                      basePath="/colaborador"
+                      basePath="/status"
                       onDeleteSuccess={handleDeletionSuccess}
-                      endpoint={"colaborador"}
-                      title={"Colaborador"}
+                      endpoint={"status"}
+                      title={"Status"}
                       name={item.nome}
                     />
                   </Table.Row>
@@ -144,6 +162,16 @@ export const Colaborador = () => {
               </Table.Body>
             </Table.Root>
           </Table.ScrollArea>
+          {pageInfo && pageInfo.totalPages > 1 && (
+            <Flex mt="8" justify="end" align="end">
+              <AppPagination
+                count={pageInfo.totalElements}
+                pageSize={pageInfo.size}
+                page={currentPage + 1}
+                onPageChange={handlePageChange}
+              />
+            </Flex>
+          )}
         </>
       )}
     </Box>

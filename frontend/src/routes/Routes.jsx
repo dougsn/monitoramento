@@ -4,10 +4,10 @@ import { Flex } from "@chakra-ui/react";
 import { Login } from "../pages/usuario/Login";
 import { HeaderApp } from "../components/HeaderApp";
 
-// Colaborador
-import { Colaborador } from "../pages/colaborador";
-import { CreateColaborador } from "../pages/colaborador/create";
-import { UpdateColaborador } from "../pages/colaborador/update";
+// Status
+import { Status } from "../pages/status/index";
+import { CreateStatus } from "../pages/status/create";
+import { UpdateStatus } from "../pages/status/update";
 
 import PrivateRoute from "../provider/PrivateRoute";
 import { AuthenticationProvider } from "../provider/AuthenticationProvider";
@@ -22,28 +22,28 @@ const AppRoutes = () => {
               <Route path="" element={<Login />} />
             </Route>
             <Route element={<LayoutWithHeader />}>
-              {/* Colaborador */}
+              {/* Status */}
               <Route
-                path="/colaborador"
+                path="/status"
                 element={
                   <PrivateRoute>
-                    <Colaborador />
+                    <Status />
                   </PrivateRoute>
                 }
               />
               <Route
-                path="/colaborador/novo"
+                path="/status/novo"
                 element={
                   <PrivateRoute>
-                    <CreateColaborador />
+                    <CreateStatus />
                   </PrivateRoute>
                 }
               />
               <Route
-                path="/colaborador/atualizar/:id"
+                path="/status/atualizar/:id"
                 element={
                   <PrivateRoute>
-                    <UpdateColaborador />
+                    <UpdateStatus />
                   </PrivateRoute>
                 }
               />

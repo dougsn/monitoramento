@@ -26,7 +26,7 @@ import { Alert } from "../../components/ui/alert";
 import { SkeletonTable } from "../../components/ui/skeleton";
 import { HeadingTitle } from "../../components/ui/heading";
 
-const UpdateColaboradorFormSchema = yup.object().shape({
+const UpdateStatusFormSchema = yup.object().shape({
   nome: yup.string().required("Nome obrigatório"),
   salario: yup.string().required("Salário obrigatório"),
   descontoVt: yup
@@ -34,8 +34,8 @@ const UpdateColaboradorFormSchema = yup.object().shape({
     .required("A aceitação do desconto de VT é obrigatória."),
 });
 
-export const UpdateColaborador = () => {
-  const [colaborador, setColaborador] = useState([]);
+export const UpdateStatus = () => {
+  const [status, setStatus] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingBtn, setIsLoadingBtn] = useState(false);
   const [erro, setErro] = useState(false);
@@ -44,11 +44,11 @@ export const UpdateColaborador = () => {
   const { id } = useParams();
 
   const { register, handleSubmit, formState, control, reset } = useForm({
-    resolver: yupResolver(UpdateColaboradorFormSchema),
+    resolver: yupResolver(UpdateStatusFormSchema),
   });
 
-  const handleUpdateColaborador = async (data) => {
-    const newColaborador = {
+  const handleUpdateStatus = async (data) => {
+    const newStatus = {
       id: id,
       nome: data.nome.trim(),
       salario: formatNumber(data.salario).replace("R$", "").trim(),
@@ -56,15 +56,15 @@ export const UpdateColaborador = () => {
     };
     setIsLoadingBtn(true);
     try {
-      const request = await api.put("/api/colaborador", newColaborador);
+      const request = await api.put("/api/status", newStatus);
       if (request.status === 200) {
         toaster.create({
-          title: "Colaborador atualizado com sucesso!",
+          title: "Status atualizado com sucesso!",
           type: "success",
         });
         setTimeout(() => {
           setIsLoadingBtn(false);
-          navigate(`/colaborador`);
+          navigate(`/status`);
         }, 800);
       }
     } catch (error) {
@@ -79,13 +79,13 @@ export const UpdateColaborador = () => {
   };
 
   useEffect(() => {
-    const getColaboradorById = async () => {
+    const getStatusById = async () => {
       if (!id) return;
       try {
-        const request = await api.get(`/api/colaborador/${id}`);
+        const request = await api.get(`/api/status/${id}`);
         if (request.data) {
           setErro(false);
-          setColaborador(request.data);
+          setStatus(request.data);
 
           const formData = {
             ...request.data,
@@ -105,7 +105,7 @@ export const UpdateColaborador = () => {
         }, 800);
       }
     };
-    getColaboradorById();
+    getStatusById();
   }, [id, reset]);
 
   return (
@@ -116,7 +116,7 @@ export const UpdateColaborador = () => {
           flex="1"
           borderRadius={8}
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleUpdateColaborador)}
+          onSubmit={handleSubmit(handleUpdateStatus)}
         >
           <Flex
             mb="8"
@@ -136,7 +136,7 @@ export const UpdateColaborador = () => {
       ) : erro ? (
         <Alert
           status="error"
-          title="Falha ao obter dados do colaborador"
+          title="Falha ao obter dados do status"
           children={"Tente novamente mais tarde"}
         />
       ) : (
@@ -145,7 +145,7 @@ export const UpdateColaborador = () => {
           flex="1"
           borderRadius={8}
           p={["6", "8"]}
-          onSubmit={handleSubmit(handleUpdateColaborador)}
+          onSubmit={handleSubmit(handleUpdateStatus)}
         >
           <Flex
             mb="8"
@@ -153,7 +153,7 @@ export const UpdateColaborador = () => {
             align="center"
             direction="column"
           >
-            <HeadingTitle name={`Editar Colaborador: ${colaborador?.nome}`} />
+            <HeadingTitle name={`Editar Status: ${status?.nome}`} />
 
             <VStack gap={10} spacing="8" w={"100%"} alignItems={"stretch"}>
               <Separator my="6" />

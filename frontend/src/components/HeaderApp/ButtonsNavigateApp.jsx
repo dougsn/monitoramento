@@ -11,8 +11,8 @@ export const ButtonsNavigateApp = () => {
   const renderAllLinks = () => {
     return (
       <>
-        <NavItem to="/colaborador" pathSegment="colaborador">
-          Colaborador
+        <NavItem to="/status" pathSegment="status">
+          Status
         </NavItem>
         <NavItem to="/filial" pathSegment="filial">
           Filial

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, HStack, Button } from "@chakra-ui/react";
 import { FaPencilAlt, FaTrash } from "react-icons/fa";
-import api from "../../services/api"; // Precisa da API aqui agora
-import { toaster } from "../../components/ui/toaster"; // E do toaster
+import api from "../../services/api";
+import { toaster } from "../../components/ui/toaster";
 import {
   DialogRoot,
   DialogContent,
@@ -11,10 +11,8 @@ import {
   DialogTitle,
   DialogBody,
   DialogFooter,
-  DialogCloseTrigger,
-} from "../../components/ui/dialog"; // E do Dialog
+} from "../../components/ui/dialog";
 
-// A prop onDeleteClick foi renomeada para onDeleteSuccess para clareza
 export const ActionButtonsCell = ({
   id,
   basePath,
@@ -25,7 +23,6 @@ export const ActionButtonsCell = ({
 }) => {
   const navigate = useNavigate();
 
-  // --- O ESTADO DO DIALOG AGORA VIVE AQUI DENTRO ---
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -43,15 +40,16 @@ export const ActionButtonsCell = ({
         type: "success",
       });
 
-      setIsOpen(false); // Fecha o diálogo
+      setIsOpen(false);
 
-      // Chama a função do componente pai para atualizar a lista na UI
       if (onDeleteSuccess) {
         onDeleteSuccess(id);
       }
     } catch (error) {
-      console.log(error);
-      toaster.create({ title: `Falha ao excluir ${name}.`, type: "error" });
+      toaster.create({
+        title: error.response.data.errorMessage,
+        type: "error",
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -95,14 +93,23 @@ export const ActionButtonsCell = ({
           </DialogBody>
           <DialogFooter>
             <Button
-              variant="outline"
               colorPalette={"blue"}
+              _dark={{
+                bg: "blue.700",
+                color: "white",
+                _hover: { bg: "blue.600" },
+              }}
               onClick={() => setIsOpen(false)}
             >
               Cancelar
             </Button>
             <Button
               colorPalette="red"
+              _dark={{
+                bg: "red.700",
+                color: "white",
+                _hover: { bg: "red.600" },
+              }}
               onClick={handleDelete}
               loading={isDeleting}
             >

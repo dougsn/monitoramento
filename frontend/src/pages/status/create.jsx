@@ -1,7 +1,6 @@
 import {
   Box,
   Flex,
-  Heading,
   HStack,
   Input,
   Separator,
@@ -14,55 +13,46 @@ import { toaster } from "../../components/ui/toaster";
 import api from "../../services/api";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Controller, useForm } from "react-hook-form";
-import { formatNumber } from "../../utils/formatNumber";
+import { useForm } from "react-hook-form";
 import { InputGroup } from "../../components/ui/input-group";
 import { FaUserAlt } from "react-icons/fa";
 import { Field } from "../../components/ui/field";
-import { Switch } from "../../components/ui/switch";
-import { CurrencyInput } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { HeadingTitle } from "../../components/ui/heading";
+import { IoMdColorPalette } from "react-icons/io";
 
-const CreateColaboradorFormSchema = yup.object().shape({
+const CreateStatusFormSchema = yup.object().shape({
   nome: yup.string().required("Nome obrigatório"),
-  salario: yup.string().required("Salário obrigatório"),
-  descontoVt: yup
-    .boolean()
-    .required("A aceitação do desconto de VT é obrigatória."),
+  cor: yup.string().required("Cor obrigatória"),
 });
 
-export const CreateColaborador = () => {
+export const CreateStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState, control } = useForm({
-    resolver: yupResolver(CreateColaboradorFormSchema),
-    defaultValues: {
-      descontoVt: false, // É uma boa prática definir um valor padrão
-    },
+  const { register, handleSubmit, formState } = useForm({
+    resolver: yupResolver(CreateStatusFormSchema),
   });
 
-  const handleCreateColaborador = async (data) => {
-    const newColaborador = {
+  const handleCreateStatus = async (data) => {
+    const newStatus = {
       nome: data.nome.trim(),
-      salario: formatNumber(data.salario).replace("R$", "").trim(),
-      descontoVt: data.descontoVt,
+      cor: data.cor,
     };
     setIsLoading(true);
     try {
-      const request = await api.post("/api/colaborador", newColaborador);
+      const request = await api.post("/api/status", newStatus);
 
       if (request.status == 201) {
         toaster.create({
-          title: "Colaborador criado com sucesso!",
+          title: "Status criado com sucesso!",
           type: "success",
           position: "top-right",
           duration: 3000,
           isClosable: true,
         });
         setTimeout(() => {
-          navigate(`/colaborador`);
+          navigate(`/status`);
         }, 1000);
       }
     } catch (error) {
@@ -106,10 +96,10 @@ export const CreateColaborador = () => {
       flex="1"
       borderRadius={8}
       p={["6", "8"]}
-      onSubmit={handleSubmit(handleCreateColaborador)}
+      onSubmit={handleSubmit(handleCreateStatus)}
     >
       <Flex mb="8" justify="space-between" align="center" direction="column">
-        <HeadingTitle name={"Criar Colaborador"} />
+        <HeadingTitle name={"Criar Status"} />
         <VStack gap={10} spacing="8" w={"100%"} alignItems={"stretch"}>
           <Separator my="6" />
           <SimpleGrid minChildWidth="240px" columns={3} gap={10}>
@@ -118,35 +108,37 @@ export const CreateColaborador = () => {
                 <Input size={"md"} placeholder="Nome" {...register("nome")} />
               </InputGroup>
             </Field>
-
-            <CurrencyInput
-              label={"Salário"}
-              {...register("salario")}
-              error={formState.errors.salario}
-            />
-          </SimpleGrid>
-          <SimpleGrid minChildWidth="240px" columns={1} gap={10}>
-            <Controller
-              name="descontoVt"
-              control={control}
-              render={({ field: { onChange, value, ref } }) => (
-                <Field
-                  label={"Descontar Vale Transporte?"}
-                  errorText={formState.errors.descontoVt}
-                >
-                  <Switch isChecked={value} onChange={onChange} ref={ref} />
-                </Field>
-              )}
-            />
+            <Field label={"Cor"} errorText={formState.errors.cor}>
+              <InputGroup startElement={<IoMdColorPalette color="gray.300" />}>
+                <Input size={"md"} placeholder="Cor" {...register("cor")} />
+              </InputGroup>
+            </Field>
           </SimpleGrid>
         </VStack>
 
         <Flex w={"100%"} mt="8" justify="flex-end">
           <HStack spacing="4">
-            <Button type="button" onClick={() => navigate(-1)} color="gray">
+            <Button
+              _dark={{
+                bg: "gray.900",
+                color: "white",
+                _hover: { bg: "gray.600" },
+              }}
+              type="button"
+              onClick={() => navigate(-1)}
+              colorPalette="gray"
+            >
               Voltar
             </Button>
-            <Button type="submit" loading={isLoading}>
+            <Button
+              _dark={{
+                bg: "blue.700",
+                color: "white",
+                _hover: { bg: "blue.600" },
+              }}
+              type="submit"
+              loading={isLoading}
+            >
               Salvar
             </Button>
           </HStack>
