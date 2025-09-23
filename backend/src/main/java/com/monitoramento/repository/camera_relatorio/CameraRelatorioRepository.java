@@ -23,4 +23,13 @@ public interface CameraRelatorioRepository extends JpaRepository<CameraRelatorio
 
     @Transactional(readOnly = true)
     List<CameraRelatorio> findAllByDia(LocalDate dia);
+
+    @Transactional(readOnly = true)
+    List<CameraRelatorio> findAllByStatusId(Long statusId);
+
+    @Transactional(readOnly = true)
+    List<CameraRelatorio> findAllByRelatorioId(Long relatorioId);
+
+    @Transactional(readOnly = true)
+    List<CameraRelatorio> findAllByCameraId(Long cameraId);
 }

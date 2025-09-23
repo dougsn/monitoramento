@@ -5,6 +5,7 @@ import com.monitoramento.dto.camera.*;
 import com.monitoramento.dto.log.camera.AddLogStatusCamera;
 import com.monitoramento.model.camera.Camera;
 import com.monitoramento.repository.camera.CameraRepository;
+import com.monitoramento.repository.camera_relatorio.CameraRelatorioRepository;
 import com.monitoramento.repository.dvr.DvrRepository;
 import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
@@ -34,6 +35,8 @@ public class CameraServiceImpl implements CameraService {
     private CameraRepository repository;
     @Autowired
     private StatusRepository statusRepository;
+    @Autowired
+    private CameraRelatorioRepository cameraRelatorioRepository;
     @Autowired
     private DvrRepository dvrRepository;
     @Autowired
@@ -146,7 +149,8 @@ public class CameraServiceImpl implements CameraService {
         var camera = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Câmera id: " + id + " não foi encontrada para ser deletado!"));
 
-        // TODO - Verificar na exclusão o vinculo com CameraRelatorio, se tiver, não deixar excluir.
+        if (!cameraRelatorioRepository.findAllByCameraId(id).isEmpty())
+            throw new DataIntegratyViolationException("A câmera não pode ser deletada, pois existem relatórios de câmeras vinculadas!");
 
         logCamera.deleteAllByCamera(id);
         repository.delete(camera);

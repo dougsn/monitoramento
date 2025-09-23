@@ -3,6 +3,8 @@ package com.monitoramento.service.impl.relatorio;
 import com.monitoramento.controller.RelatorioController;
 import com.monitoramento.dto.relatorio.*;
 import com.monitoramento.model.relatorio.Relatorio;
+import com.monitoramento.repository.camera_relatorio.CameraRelatorioRepository;
+import com.monitoramento.repository.dvr_relatorio.DvrRelatorioRepository;
 import com.monitoramento.repository.relatorio.RelatorioRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
@@ -31,6 +33,10 @@ public class RelatorioServiceImpl implements RelatorioService {
     private RelatorioDTOMapper mapper;
     @Autowired
     private DataRelatorioDTOMapper dataMapper;
+    @Autowired
+    private DvrRelatorioRepository dvrRelatorioRepository;
+    @Autowired
+    private CameraRelatorioRepository cameraRelatorioRepository;
     @Autowired
     PagedResourcesAssembler<AllRelatorio> assembler;
 
@@ -92,7 +98,11 @@ public class RelatorioServiceImpl implements RelatorioService {
         var relatorio = repository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("Relatório id: " + id + " não foi encontrado para ser deletado!"));
 
-        // TODO - Fazer validação do CameraRelatorio e DvrRelatorio, não deixar excluir e mostrar mensagem de erro.
+        if (!cameraRelatorioRepository.findAllByRelatorioId(id).isEmpty())
+            throw new DataIntegratyViolationException("O relatório não pode ser deletado, pois existem relatórios de câmeras vinculadas!");
+
+        if (!dvrRelatorioRepository.findAllByRelatorioId(id).isEmpty())
+            throw new DataIntegratyViolationException("O relatório não pode ser deletado, pois existem relatórios de dvrs vinculados!");
 
         repository.delete(relatorio);
         return true;

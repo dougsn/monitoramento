@@ -14,11 +14,22 @@ import java.util.Optional;
 public interface DvrRelatorioRepository extends JpaRepository<DvrRelatorio, Long> {
     @Transactional(readOnly = true)
     Boolean existsByDia(LocalDate dia);
+
     @Transactional(readOnly = true)
     Boolean existsByDiaAndDvrId(LocalDate dia, Long dvrId);
+
     @Transactional(readOnly = true)
     Optional<DvrRelatorio> findByDiaAndDvrId(LocalDate dia, Long dvrId);
 
     @Transactional(readOnly = true)
     List<DvrRelatorio> findAllByDia(LocalDate dia);
+
+    @Transactional(readOnly = true)
+    List<DvrRelatorio> findAllByStatusId(Long statusId);
+
+    @Transactional(readOnly = true)
+    List<DvrRelatorio> findAllByRelatorioId(Long relatorioId);
+
+    @Transactional(readOnly = true)
+    List<DvrRelatorio> findAllByDvrId(Long dvrId);
 }

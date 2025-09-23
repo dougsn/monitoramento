@@ -4,7 +4,9 @@ import com.monitoramento.controller.StatusController;
 import com.monitoramento.dto.status.*;
 import com.monitoramento.model.status.Status;
 import com.monitoramento.repository.camera.CameraRepository;
+import com.monitoramento.repository.camera_relatorio.CameraRelatorioRepository;
 import com.monitoramento.repository.dvr.DvrRepository;
+import com.monitoramento.repository.dvr_relatorio.DvrRelatorioRepository;
 import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
@@ -33,7 +35,11 @@ public class StatusServiceImpl implements StatusService {
     @Autowired
     private DvrRepository dvrRepository;
     @Autowired
+    private DvrRelatorioRepository dvrRelatorioRepository;
+    @Autowired
     private CameraRepository cameraRepository;
+    @Autowired
+    private CameraRelatorioRepository cameraRelatorioRepository;
 
     @Autowired
     private DataStatusDTOMapper dataMapper;
@@ -104,7 +110,11 @@ public class StatusServiceImpl implements StatusService {
         if (!dvrRepository.findAllByStatusId(id).isEmpty())
             throw new DataIntegratyViolationException("O status não pode ser deletado, pois existem dvrs vinculados!");
 
-        // TODO - Verificar na exclusão o vinculo com DvrRelatorio e CameraRelatorio, se tiver, não deixar excluir.
+        if (!cameraRelatorioRepository.findAllByStatusId(id).isEmpty())
+            throw new DataIntegratyViolationException("O status não pode ser deletado, pois existem relatórios de câmeras vinculadas!");
+
+        if (!dvrRelatorioRepository.findAllByStatusId(id).isEmpty())
+            throw new DataIntegratyViolationException("O status não pode ser deletado, pois existem relatórios de dvrs vinculados!");
 
         repository.delete(status);
         return true;
