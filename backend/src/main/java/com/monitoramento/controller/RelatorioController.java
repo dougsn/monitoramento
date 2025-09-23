@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/relatorio")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class RelatorioController {
 
     @Autowired
@@ -55,6 +54,7 @@ public class RelatorioController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         return service.delete(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
