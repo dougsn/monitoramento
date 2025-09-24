@@ -1,9 +1,6 @@
 package com.monitoramento.controller;
 
-import com.monitoramento.dto.status.AddStatus;
-import com.monitoramento.dto.status.AllStatus;
-import com.monitoramento.dto.status.UpdateStatus;
-import com.monitoramento.dto.status.ViewStatus;
+import com.monitoramento.dto.status.*;
 import com.monitoramento.service.interfaces.status.StatusService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/status")
@@ -35,7 +34,12 @@ public class StatusController {
         var sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "id"));
-        return ResponseEntity.ok(service.findAll(pageable));
+        return ResponseEntity.ok(service.findAllPaged(pageable));
+    }
+
+    @GetMapping(value = "/find-all", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<FindAllStatus>> findAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})

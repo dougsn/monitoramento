@@ -19,6 +19,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -42,13 +43,15 @@ public class StatusServiceImpl implements StatusService {
     private CameraRelatorioRepository cameraRelatorioRepository;
 
     @Autowired
+    private StatusFindAllDTOMapper findAllDTOMapper;
+    @Autowired
     private DataStatusDTOMapper dataMapper;
     @Autowired
     PagedResourcesAssembler<AllStatus> assembler;
 
 
     @Override
-    public PagedModel<EntityModel<AllStatus>> findAll(Pageable pageable) {
+    public PagedModel<EntityModel<AllStatus>> findAllPaged(Pageable pageable) {
         logger.info("Buscando os status.");
 
         var status = repository.findAll(pageable);
@@ -60,6 +63,11 @@ public class StatusServiceImpl implements StatusService {
                 .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
 
         return assembler.toModel(dtoList, link);
+    }
+
+    @Override
+    public List<FindAllStatus> findAll() {
+        return repository.findAll().stream().map(findAllDTOMapper).toList();
     }
 
     @Override
