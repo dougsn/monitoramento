@@ -37,7 +37,7 @@ export const CreateStatus = () => {
   const handleCreateStatus = async (data) => {
     const newStatus = {
       nome: data.nome.trim(),
-      cor: data.cor,
+      cor: data.cor.trim(),
     };
     setIsLoading(true);
     try {

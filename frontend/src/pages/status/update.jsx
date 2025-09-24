@@ -15,7 +15,6 @@ import api from "../../services/api";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
-import { formatNumber } from "../../utils/formatNumber";
 import { InputGroup } from "../../components/ui/input-group";
 import { FaUserAlt } from "react-icons/fa";
 import { Field } from "../../components/ui/field";
@@ -25,13 +24,11 @@ import { Button } from "../../components/ui/button";
 import { Alert } from "../../components/ui/alert";
 import { SkeletonTable } from "../../components/ui/skeleton";
 import { HeadingTitle } from "../../components/ui/heading";
+import { IoMdColorPalette } from "react-icons/io";
 
 const UpdateStatusFormSchema = yup.object().shape({
   nome: yup.string().required("Nome obrigatório"),
-  salario: yup.string().required("Salário obrigatório"),
-  descontoVt: yup
-    .boolean()
-    .required("A aceitação do desconto de VT é obrigatória."),
+  cor: yup.string().required("Cor obrigatória"),
 });
 
 export const UpdateStatus = () => {
@@ -43,7 +40,7 @@ export const UpdateStatus = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { register, handleSubmit, formState, control, reset } = useForm({
+  const { register, handleSubmit, formState, reset } = useForm({
     resolver: yupResolver(UpdateStatusFormSchema),
   });
 
@@ -51,8 +48,7 @@ export const UpdateStatus = () => {
     const newStatus = {
       id: id,
       nome: data.nome.trim(),
-      salario: formatNumber(data.salario).replace("R$", "").trim(),
-      descontoVt: data.descontoVt,
+      cor: data.cor.trim(),
     };
     setIsLoadingBtn(true);
     try {
@@ -68,6 +64,7 @@ export const UpdateStatus = () => {
         }, 800);
       }
     } catch (error) {
+      setIsLoadingBtn(false);
       const errorTitle =
         error.message === "Network Error"
           ? "Serviço indisponível"
@@ -89,7 +86,6 @@ export const UpdateStatus = () => {
 
           const formData = {
             ...request.data,
-            descontoVt: request.data.descontoVt === true,
           };
 
           reset(formData); // Usando reset para popular o formulário
@@ -128,7 +124,7 @@ export const UpdateStatus = () => {
             <VStack gap={20} spacing="8" w={"100%"} alignItems={"stretch"}>
               <SimpleGrid></SimpleGrid>
               <SimpleGrid>
-                <SkeletonTable rows={3} columns={2} />
+                <SkeletonTable rows={2} columns={2} />
               </SimpleGrid>
             </VStack>
           </Flex>
@@ -167,38 +163,13 @@ export const UpdateStatus = () => {
                     />
                   </InputGroup>
                 </Field>
-
-                <Controller
-                  name="salario"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <CurrencyInput
-                      label={"Salário"}
-                      error={fieldState.error}
-                      {...field}
-                    />
-                  )}
-                />
-              </SimpleGrid>
-              <SimpleGrid minChildWidth="240px" columns={1} gap={10}>
-                <Controller
-                  name="descontoVt"
-                  control={control}
-                  render={({ field }) => {
-                    return (
-                      <Field
-                        label={"Descontar Vale Transporte?"}
-                        errorText={formState.errors.descontoVt?.message}
-                      >
-                        <Switch
-                          isChecked={field.value}
-                          onChange={field.onChange}
-                          ref={field.ref}
-                        />
-                      </Field>
-                    );
-                  }}
-                />
+                <Field label={"Cor"} errorText={formState.errors.cor}>
+                  <InputGroup
+                    startElement={<IoMdColorPalette color="gray.300" />}
+                  >
+                    <Input size={"md"} placeholder="Cor" {...register("cor")} />
+                  </InputGroup>
+                </Field>
               </SimpleGrid>
             </VStack>
 
