@@ -9,6 +9,11 @@ import { Status } from "../pages/status/index";
 import { CreateStatus } from "../pages/status/create";
 import { UpdateStatus } from "../pages/status/update";
 
+// Dvr
+import { Dvr } from "../pages/dvr/index";
+import { CreateDvr } from "../pages/dvr/create";
+import { UpdateDvr } from "../pages/dvr/update";
+
 import PrivateRoute from "../provider/PrivateRoute";
 import { AuthenticationProvider } from "../provider/AuthenticationProvider";
 
@@ -44,6 +49,31 @@ const AppRoutes = () => {
                 element={
                   <PrivateRoute>
                     <UpdateStatus />
+                  </PrivateRoute>
+                }
+              />
+              {/* Dvr */}
+              <Route
+                path="/dvr"
+                element={
+                  <PrivateRoute>
+                    <Dvr />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dvr/novo"
+                element={
+                  <PrivateRoute>
+                    <CreateDvr />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dvr/atualizar/:id"
+                element={
+                  <PrivateRoute>
+                    <UpdateDvr />
                   </PrivateRoute>
                 }
               />

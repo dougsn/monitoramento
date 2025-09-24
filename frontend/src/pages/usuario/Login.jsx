@@ -61,9 +61,9 @@ export const Login = () => {
         setTimeout(() => {
           setIsLoading(false);
           if (userLogin.data.role !== "ROLE_ADMIN") {
-            navigate(`/colaborador`);
+            navigate(`/status`);
           } else {
-            navigate(`/colaborador`);
+            navigate(`/status`);
           }
         }, 1000);
       }

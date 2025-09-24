@@ -2,12 +2,8 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   Flex,
-  Heading,
   Icon,
-  IconButton,
-  Pagination,
   Table,
   useMediaQuery,
 } from "@chakra-ui/react";
@@ -22,9 +18,9 @@ import { RiAddLine } from "react-icons/ri";
 import { HeadingTitle } from "../../components/ui/heading";
 import { AppPagination } from "../../components/ui/pagination";
 
-export const Status = () => {
-  const [status, setStatus] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+export const Dvr = () => {
+  const [dvr, setDvr] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [erro, setErro] = useState(false);
   const [isEmpty, setIsEmpty] = useState(false);
 
@@ -34,16 +30,16 @@ export const Status = () => {
   const navigate = useNavigate();
   const [isLargerThan768] = useMediaQuery("(max-width: 768px)");
 
-  const getStatus = async () => {
+  const getDvr = async () => {
     setIsLoading(true);
     try {
-      const request = await api.get(`/api/status?page=${currentPage}`);
+      const request = await api.get(`/api/dvr?page=${currentPage}`);
       const responseData = request.data;
 
-      setStatus(responseData._embedded.allStatusList);
+      setDvr(responseData._embedded.allDvrList);
       setPageInfo(responseData.page);
 
-      if (responseData._embedded.allStatusList.length === 0) {
+      if (responseData._embedded.allDvrList.length === 0) {
         setIsEmpty(true);
       }
       setTimeout(() => {
@@ -63,12 +59,12 @@ export const Status = () => {
   };
 
   const handleDeletionSuccess = (deletedId) => {
-    setStatus((prevStatus) => prevStatus.filter((c) => c.id !== deletedId));
-    getStatus(currentPage);
+    setDvr((prevDvr) => prevDvr.filter((c) => c.id !== deletedId));
+    getDvr(currentPage);
   };
 
   useEffect(() => {
-    getStatus(currentPage);
+    getDvr(currentPage);
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -83,7 +79,7 @@ export const Status = () => {
     <Box display={"flex"} flexDirection={"column"} p="8" w={"100%"}>
       {isLargerThan768 ? (
         <Flex mb="8" justify="space-around" align="center">
-          <HeadingTitle name={"Status"} />
+          <HeadingTitle name={"Dvr"} />
           <Button
             _dark={{
               bg: "blue.700",
@@ -92,7 +88,7 @@ export const Status = () => {
             }}
             size="xs"
             fontSize="sm"
-            onClick={() => navigate("/status/novo/")}
+            onClick={() => navigate("/dvr/novo/")}
             colorPalette={"blue"}
           >
             <Icon as={RiAddLine} />
@@ -100,7 +96,7 @@ export const Status = () => {
         </Flex>
       ) : (
         <Flex mb="8" justify="space-between" align="center">
-          <HeadingTitle name={"Status"} />
+          <HeadingTitle name={"Dvr"} />
           <Button
             _dark={{
               bg: "blue.700",
@@ -108,7 +104,7 @@ export const Status = () => {
               _hover: { bg: "blue.600" },
             }}
             colorPalette={"blue"}
-            onClick={() => navigate("/status/novo/")}
+            onClick={() => navigate("/dvr/novo/")}
           >
             Criar novo
           </Button>
@@ -119,15 +115,15 @@ export const Status = () => {
         <SkeletonTable rows={6} columns={3} />
       ) : erro ? (
         <Alert
-          status="error"
-          title="Falha ao obter dados dos status"
+          dvr="error"
+          title="Falha ao obter dados dos dvr"
           children={"Tente novamente mais tarde"}
         />
       ) : isEmpty ? (
         <Alert
-          status="info"
+          dvr="info"
           title="Não há dados"
-          children={"Cadastre um novo status"}
+          children={"Cadastre um novo dvr"}
         />
       ) : (
         <>
@@ -141,21 +137,21 @@ export const Status = () => {
               <Table.Header>
                 <Table.Row>
                   <Table.ColumnHeader>Nome</Table.ColumnHeader>
-                  <Table.ColumnHeader>Cor</Table.ColumnHeader>
+                  <Table.ColumnHeader>Status</Table.ColumnHeader>
                   <Table.ColumnHeader textAlign="end">Ações</Table.ColumnHeader>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {status.map((item) => (
+                {dvr.map((item) => (
                   <Table.Row fontWeight={"semibold"} key={item.id}>
                     <Table.Cell>{item.nome}</Table.Cell>
-                    <Table.Cell>{item.cor}</Table.Cell>
+                    <Table.Cell>{item.nomeStatus}</Table.Cell>
                     <ActionButtonsCell
                       id={item.id}
-                      basePath="/status"
+                      basePath="/dvr"
                       onDeleteSuccess={handleDeletionSuccess}
-                      endpoint={"status"}
-                      title={"Status"}
+                      endpoint={"dvr"}
+                      title={"Dvr"}
                       name={item.nome}
                     />
                   </Table.Row>

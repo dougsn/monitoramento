@@ -14,23 +14,8 @@ export const ButtonsNavigateApp = () => {
         <NavItem to="/status" pathSegment="status">
           Status
         </NavItem>
-        <NavItem to="/filial" pathSegment="filial">
-          Filial
-        </NavItem>
-        <NavItem to="/operacional" pathSegment="operacional">
-          Operacional
-        </NavItem>
-        <NavItem to="/ensino-fundamental" pathSegment="ensino-fundamental">
-          Ensino Fundamental
-        </NavItem>
-        <NavItem to="/pre" pathSegment="pre">
-          Pre
-        </NavItem>
-        <NavItem to="/ensino-medio" pathSegment="ensino-medio">
-          Ensino Médio
-        </NavItem>
-        <NavItem to="/user" pathSegment="user">
-          Usuário
+        <NavItem to="/dvr" pathSegment="dvr">
+          Dvr
         </NavItem>
       </>
     );
