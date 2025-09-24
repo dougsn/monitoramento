@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class ViewDvr {
     private Long id;
     private String nome;
+    private Long statusId;
     private String nomeStatus;
 }

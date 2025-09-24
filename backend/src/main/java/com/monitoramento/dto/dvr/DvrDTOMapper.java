@@ -12,6 +12,7 @@ public class DvrDTOMapper implements Function<Dvr, ViewDvr> {
         return new ViewDvr(
                 data.getId(),
                 data.getNome(),
+                data.getStatus().getId(),
                 data.getStatus().getNome()
         );
     }
