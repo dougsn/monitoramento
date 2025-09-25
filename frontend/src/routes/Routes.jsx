@@ -14,6 +14,11 @@ import { Dvr } from "../pages/dvr/index";
 import { CreateDvr } from "../pages/dvr/create";
 import { UpdateDvr } from "../pages/dvr/update";
 
+// Dvr
+import { Camera } from "../pages/camera/index";
+import { CreateCamera } from "../pages/camera/create";
+import { UpdateCamera } from "../pages/camera/update";
+
 import PrivateRoute from "../provider/PrivateRoute";
 import { AuthenticationProvider } from "../provider/AuthenticationProvider";
 
@@ -52,6 +57,7 @@ const AppRoutes = () => {
                   </PrivateRoute>
                 }
               />
+
               {/* Dvr */}
               <Route
                 path="/dvr"
@@ -74,6 +80,32 @@ const AppRoutes = () => {
                 element={
                   <PrivateRoute>
                     <UpdateDvr />
+                  </PrivateRoute>
+                }
+              />
+
+              {/* Camera */}
+              <Route
+                path="/camera"
+                element={
+                  <PrivateRoute>
+                    <Camera />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/camera/novo"
+                element={
+                  <PrivateRoute>
+                    <CreateCamera />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/camera/atualizar/:id"
+                element={
+                  <PrivateRoute>
+                    <UpdateCamera />
                   </PrivateRoute>
                 }
               />
