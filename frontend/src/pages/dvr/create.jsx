@@ -15,12 +15,12 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { InputGroup } from "../../components/ui/input-group";
-import { FaUserAlt } from "react-icons/fa";
 import { Field } from "../../components/ui/field";
 import { Button } from "../../components/ui/button";
 import { HeadingTitle } from "../../components/ui/heading";
 import { FormSelect } from "../../components/ui/select";
 import { SkeletonTable } from "../../components/ui/skeleton";
+import { MdDvr } from "react-icons/md";
 
 const CreateDvrFormSchema = yup.object().shape({
   nome: yup.string().required("Nome obrigatório"),
@@ -139,7 +139,7 @@ export const CreateDvr = () => {
               <Separator my="6" />
               <SimpleGrid minChildWidth="240px" columns={3} gap={10}>
                 <Field label={"Nome"} errorText={formState.errors.nome}>
-                  <InputGroup startElement={<FaUserAlt color="gray.300" />}>
+                  <InputGroup startElement={<MdDvr color="gray.300" />}>
                     <Input
                       size={"md"}
                       placeholder="Nome"
