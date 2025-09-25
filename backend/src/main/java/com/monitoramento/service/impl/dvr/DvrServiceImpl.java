@@ -21,6 +21,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -43,6 +44,8 @@ public class DvrServiceImpl implements DvrService {
     @Autowired
     private DvrDTOMapper mapper;
     @Autowired
+    private DvrFindAllDTOMapper findAllDTOMapper;
+    @Autowired
     private DataDvrDTOMapper dataMapper;
     @Autowired
     PagedResourcesAssembler<AllDvr> assembler;
@@ -50,7 +53,7 @@ public class DvrServiceImpl implements DvrService {
 
     @Override
     public PagedModel<EntityModel<AllDvr>> findAll(Pageable pageable) {
-        logger.info("Buscando os dvrs.");
+        logger.info("Buscando os dvrs de forma paginada.");
 
         var dvr = repository.findAll(pageable);
 
@@ -61,6 +64,14 @@ public class DvrServiceImpl implements DvrService {
                 .findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
 
         return assembler.toModel(dtoList, link);
+    }
+
+    @Override
+    public List<FindAllDvr> findAll() {
+        logger.info("Buscando todas os dvrs.");
+        return repository.findAll()
+                .stream().map(findAllDTOMapper)
+                .toList();
     }
 
     @Override

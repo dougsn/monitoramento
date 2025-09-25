@@ -12,7 +12,9 @@ public class CameraDTOMapper implements Function<Camera, ViewCamera> {
         return new ViewCamera(
                 data.getId(),
                 data.getNome(),
+                data.getStatus().getId(),
                 data.getStatus().getNome(),
+                data.getDvr().getId(),
                 data.getDvr().getNome()
         );
     }

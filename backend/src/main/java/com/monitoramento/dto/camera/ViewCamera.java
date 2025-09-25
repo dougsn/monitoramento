@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class ViewCamera {
     private Long id;
     private String nome;
+    private Long statusId;
     private String nomeStatus;
+    private Long dvrId;
     private String nomeDvr;
 }

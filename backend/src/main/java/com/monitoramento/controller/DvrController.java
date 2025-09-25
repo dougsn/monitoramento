@@ -1,9 +1,6 @@
 package com.monitoramento.controller;
 
-import com.monitoramento.dto.dvr.AddDvr;
-import com.monitoramento.dto.dvr.AllDvr;
-import com.monitoramento.dto.dvr.UpdateDvr;
-import com.monitoramento.dto.dvr.ViewDvr;
+import com.monitoramento.dto.dvr.*;
 import com.monitoramento.service.interfaces.dvr.DvrService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/dvr")
@@ -37,6 +36,13 @@ public class DvrController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "id"));
         return ResponseEntity.ok(service.findAll(pageable));
     }
+
+
+    @GetMapping(value = "/find-all", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<FindAllDvr>> findAll() {
+        return ResponseEntity.ok().body(service.findAll());
+    }
+
 
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ViewDvr> findById(@PathVariable Long id) {
