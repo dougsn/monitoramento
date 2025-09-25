@@ -1,13 +1,27 @@
 package com.monitoramento.service.impl.relatorio;
 
 import com.monitoramento.controller.RelatorioController;
+import com.monitoramento.dto.camera.UpdateCamera;
+import com.monitoramento.dto.camera_relatorio.AddCameraRelatorio;
+import com.monitoramento.dto.dvr.UpdateDvr;
+import com.monitoramento.dto.dvr_relatorio.AddDvrRelatorio;
 import com.monitoramento.dto.relatorio.*;
+import com.monitoramento.dto.relatorio.create_relatorio.CameraRelatorio;
+import com.monitoramento.dto.relatorio.create_relatorio.CreateRelatorio;
+import com.monitoramento.dto.relatorio.create_relatorio.ListDvr;
 import com.monitoramento.model.relatorio.Relatorio;
+import com.monitoramento.repository.camera.CameraRepository;
 import com.monitoramento.repository.camera_relatorio.CameraRelatorioRepository;
+import com.monitoramento.repository.dvr.DvrRepository;
 import com.monitoramento.repository.dvr_relatorio.DvrRelatorioRepository;
 import com.monitoramento.repository.relatorio.RelatorioRepository;
+import com.monitoramento.repository.status.StatusRepository;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
+import com.monitoramento.service.interfaces.camera.CameraService;
+import com.monitoramento.service.interfaces.camera_relatorio.CameraRelatorioService;
+import com.monitoramento.service.interfaces.dvr.DvrService;
+import com.monitoramento.service.interfaces.dvr_relatorio.DvrRelatorioService;
 import com.monitoramento.service.interfaces.relatorio.RelatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -34,9 +48,23 @@ public class RelatorioServiceImpl implements RelatorioService {
     @Autowired
     private DataRelatorioDTOMapper dataMapper;
     @Autowired
+    private DvrRepository dvrRepository;
+    @Autowired
+    private DvrService dvrService;
+    @Autowired
+    private CameraRepository cameraRepository;
+    @Autowired
+    private CameraService cameraService;
+    @Autowired
+    private StatusRepository statusRepository;
+    @Autowired
     private DvrRelatorioRepository dvrRelatorioRepository;
     @Autowired
+    private DvrRelatorioService dvrRelatorioService;
+    @Autowired
     private CameraRelatorioRepository cameraRelatorioRepository;
+    @Autowired
+    private CameraRelatorioService cameraRelatorioService;
     @Autowired
     PagedResourcesAssembler<AllRelatorio> assembler;
 
@@ -63,6 +91,64 @@ public class RelatorioServiceImpl implements RelatorioService {
         return repository.findById(id)
                 .map(mapper)
                 .orElseThrow(() -> new ObjectNotFoundException("Relatório de id: " + id + " não foi encontrado."));
+    }
+
+    @Override
+    public void createRelatorio(CreateRelatorio data) {
+        logger.info("Criando novo relatório com os demais fluxos de atualização dos status diários.");
+
+        var relatorio = new AddRelatorio();
+        relatorio.setDia(data.getDia());
+        relatorio.setDescricao(data.getDescricao());
+        var newRelatorio = add(relatorio);
+
+        for (ListDvr dvr : data.getDvrs()) {
+            var statusDvr = statusRepository.findById(dvr.getStatusIdDvr())
+                    .orElseThrow(() -> new ObjectNotFoundException("O status de id: " + dvr.getStatusIdDvr() + " não foi encontrada."));
+            var dvrEntity =
+                    dvrRepository.findById(dvr.getDvrId())
+                            .orElseThrow(() -> new ObjectNotFoundException("O dvr de id: " + dvr.getDvrId() + " não foi encontrado."));
+
+            logger.info("Criando o DVR Relatório.");
+            var dvrRelatorio = new AddDvrRelatorio();
+            dvrRelatorio.setDia(data.getDia());
+            dvrRelatorio.setIdRelatorio(newRelatorio.getId());
+            dvrRelatorio.setIdDvr(dvrEntity.getId());
+            dvrRelatorio.setIdStatus(statusDvr.getId());
+            dvrRelatorioService.add(dvrRelatorio);
+
+            logger.info("Atualizando o status do DVR e criando seus log's.");
+            var updateDvr = new UpdateDvr();
+            updateDvr.setId(dvrEntity.getId());
+            updateDvr.setNome(dvrEntity.getNome());
+            updateDvr.setDia(data.getDia());
+            updateDvr.setIdStatus(statusDvr.getId());
+            dvrService.update(updateDvr);
+
+            for (CameraRelatorio camera : dvr.getCameras()) {
+                var statusCamera = statusRepository.findById(camera.getStatusId())
+                        .orElseThrow(() -> new ObjectNotFoundException("O status de id: " + camera.getStatusId() + " não foi encontrada."));
+                var cameraEntity = cameraRepository.findById(camera.getCameraId())
+                        .orElseThrow(() -> new ObjectNotFoundException("A câmera de id: " + camera.getCameraId() + " não foi encontrada."));
+
+                logger.info("Atualizando o status da câmera e criando seus log's.");
+                var updateCamera = new UpdateCamera();
+                updateCamera.setId(cameraEntity.getId());
+                updateCamera.setDia(data.getDia());
+                updateCamera.setNome(cameraEntity.getNome());
+                updateCamera.setIdDvr(dvrEntity.getId());
+                updateCamera.setIdStatus(statusCamera.getId());
+                cameraService.update(updateCamera);
+
+                logger.info("Criando o Câmera Relatório.");
+                var cameraRelatorio = new AddCameraRelatorio();
+                cameraRelatorio.setDia(data.getDia());
+                cameraRelatorio.setIdCamera(cameraEntity.getId());
+                cameraRelatorio.setIdRelatorio(newRelatorio.getId());
+                cameraRelatorio.setIdStatus(statusCamera.getId());
+                cameraRelatorioService.add(cameraRelatorio);
+            }
+        }
     }
 
     @Override

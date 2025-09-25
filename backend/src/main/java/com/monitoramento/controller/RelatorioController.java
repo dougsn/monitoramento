@@ -4,6 +4,7 @@ import com.monitoramento.dto.relatorio.AddRelatorio;
 import com.monitoramento.dto.relatorio.AllRelatorio;
 import com.monitoramento.dto.relatorio.UpdateRelatorio;
 import com.monitoramento.dto.relatorio.ViewRelatorio;
+import com.monitoramento.dto.relatorio.create_relatorio.CreateRelatorio;
 import com.monitoramento.service.interfaces.relatorio.RelatorioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class RelatorioController {
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ViewRelatorio> findById(@PathVariable Long id) {
         return ResponseEntity.ok().body(service.findById(id));
+    }
+
+    @PostMapping(value = "/create-relatorio", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public void createRelatorio(@Valid @RequestBody CreateRelatorio request) {
+        service.createRelatorio(request);
     }
 
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})

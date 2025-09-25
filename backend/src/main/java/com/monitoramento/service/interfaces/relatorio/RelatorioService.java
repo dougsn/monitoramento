@@ -4,6 +4,7 @@ import com.monitoramento.dto.relatorio.AddRelatorio;
 import com.monitoramento.dto.relatorio.AllRelatorio;
 import com.monitoramento.dto.relatorio.UpdateRelatorio;
 import com.monitoramento.dto.relatorio.ViewRelatorio;
+import com.monitoramento.dto.relatorio.create_relatorio.CreateRelatorio;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
@@ -16,6 +17,9 @@ public interface RelatorioService {
 
     @Transactional(readOnly = true)
     ViewRelatorio findById(Long id);
+
+    @Transactional
+    void createRelatorio(CreateRelatorio data);
 
     @Transactional
     ViewRelatorio add(AddRelatorio data);
