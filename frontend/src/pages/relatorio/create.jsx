@@ -188,7 +188,15 @@ export const CreateRelatorio = () => {
           <VStack gap={20} spacing="8" w={"100%"} alignItems={"stretch"}>
             <SimpleGrid></SimpleGrid>
             <SimpleGrid>
-              <SkeletonTable rows={2} columns={2} />
+              <SkeletonTable rows={2} columns={1} />
+            </SimpleGrid>
+            <SimpleGrid>
+              <SkeletonTable rows={1} columns={1} />
+              <SkeletonTable rows={1} columns={4} />
+            </SimpleGrid>
+            <SimpleGrid>
+              <SkeletonTable rows={1} columns={1} />
+              <SkeletonTable rows={1} columns={4} />
             </SimpleGrid>
           </VStack>
         </Flex>
