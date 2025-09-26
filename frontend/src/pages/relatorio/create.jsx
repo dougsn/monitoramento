@@ -71,7 +71,7 @@ export const CreateRelatorio = () => {
       dvrs: data.dvrs.map((dMap) => ({
         dvrId: dMap.dvrId,
         statusIdDvr: dMap.statusIdDvr,
-        cameras: dMap.cameras.map((cMap) => ({
+        cameras: dMap.cameras?.map((cMap) => ({
           cameraId: cMap.cameraId,
           statusId: cMap.statusId,
         })),
@@ -146,6 +146,7 @@ export const CreateRelatorio = () => {
     try {
       const request = await api.get(`/api/dvr/find-all`);
       setDvr(request.data);
+      console.log(request.data);
 
       setTimeout(() => {
         setIsLoading(false);
@@ -207,7 +208,14 @@ export const CreateRelatorio = () => {
                   </InputGroup>
                 </Field>
               </SimpleGrid>
-
+              <Heading
+                size={{ base: "sm", md: "sm" }}
+                fontWeight="500"
+                textAlign={"start"}
+                w="100%"
+              >
+                2. Faça o preenchimento do status de cada câmera:
+              </Heading>
               <Flex flex={"wrap"} flexDir={"column"} gap={10}>
                 {dvr.map((d, i) => (
                   <Box key={i}>
@@ -220,15 +228,7 @@ export const CreateRelatorio = () => {
                       DVR: {d.label}
                     </Heading>
                     <Separator my="6" />
-                    <Flex
-                      flex={"wrap"}
-                      flexDir={"row"}
-                      gap={10}
-                      spacing="8"
-                      w={"100%"}
-                      alignItems={"stretch"}
-                      mt="4"
-                    >
+                    <SimpleGrid minChildWidth="240px" columns={3} gap={10}>
                       {d.cameras.map((c, index) => (
                         <>
                           <FormSelect
@@ -255,11 +255,18 @@ export const CreateRelatorio = () => {
                           />
                         </>
                       ))}
-                    </Flex>
+                    </SimpleGrid>
                   </Box>
                 ))}
               </Flex>
-
+              <Heading
+                size={{ base: "sm", md: "sm" }}
+                fontWeight="500"
+                textAlign={"start"}
+                w="100%"
+              >
+                3. Faça o preenchimento do status de cada DVR:
+              </Heading>
               <SimpleGrid minChildWidth="240px" columns={3} gap={10}>
                 {dvr.map((d, idx) => (
                   <>
@@ -282,13 +289,17 @@ export const CreateRelatorio = () => {
                 ))}
               </SimpleGrid>
 
+              <Heading
+                size={{ base: "sm", md: "sm" }}
+                fontWeight="500"
+                textAlign={"start"}
+                w="100%"
+              >
+                4. Caso tenha alguma observação relacionada ao relatório ou
+                sobre alguma câmera, informe no campo abaixo:
+              </Heading>
               <SimpleGrid minChildWidth="240px" columns={3} gap={10}>
-                <Field
-                  label={
-                    "4. Caso tenha alguma observação relacionada ao relatório ou sobre alguma câmera, informe no campo abaixo:"
-                  }
-                  formState={formState.errors.descricao}
-                >
+                <Field formState={formState.errors.descricao}>
                   <Textarea
                     {...register("descricao")}
                     placeholder="Descrição do relatório"
