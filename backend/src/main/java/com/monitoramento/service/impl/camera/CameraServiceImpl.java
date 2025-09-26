@@ -84,7 +84,7 @@ public class CameraServiceImpl implements CameraService {
     @Override
     public ViewCamera add(AddCamera data) {
         logger.info("Adicionando câmera");
-        var dvr = dvrRepository.findById(data.getIdStatus())
+        var dvr = dvrRepository.findById(data.getIdDvr())
                 .orElseThrow(() -> new ObjectNotFoundException("O dvr de id: " + data.getIdDvr() + " não foi encontrado."));
 
         if (repository.existsByNomeAndDvrId(data.getNome(), data.getIdDvr()))
