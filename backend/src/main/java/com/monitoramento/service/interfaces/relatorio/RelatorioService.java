@@ -10,6 +10,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 public interface RelatorioService {
 
     @Transactional(readOnly = true)
@@ -20,6 +22,9 @@ public interface RelatorioService {
 
     @Transactional
     void createRelatorio(CreateRelatorio data);
+
+    @Transactional
+    void viewRelatorio(LocalDate dia);
 
     @Transactional
     ViewRelatorio add(AddRelatorio data);

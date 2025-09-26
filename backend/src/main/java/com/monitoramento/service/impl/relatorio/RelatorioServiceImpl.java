@@ -3,13 +3,19 @@ package com.monitoramento.service.impl.relatorio;
 import com.monitoramento.controller.RelatorioController;
 import com.monitoramento.dto.camera.UpdateCamera;
 import com.monitoramento.dto.camera_relatorio.AddCameraRelatorio;
+import com.monitoramento.dto.camera_relatorio.CameraRelatorioDTOMapper;
+import com.monitoramento.dto.camera_relatorio.ViewCameraRelatorio;
 import com.monitoramento.dto.dvr.UpdateDvr;
 import com.monitoramento.dto.dvr_relatorio.AddDvrRelatorio;
+import com.monitoramento.dto.dvr_relatorio.DvrRelatorioDTOMapper;
+import com.monitoramento.dto.dvr_relatorio.ViewDvrRelatorio;
 import com.monitoramento.dto.relatorio.*;
 import com.monitoramento.dto.relatorio.create_relatorio.CameraRelatorio;
 import com.monitoramento.dto.relatorio.create_relatorio.CreateRelatorio;
 import com.monitoramento.dto.relatorio.create_relatorio.ListDvr;
+import com.monitoramento.dto.relatorio.dashboard.QuantidadeGeral;
 import com.monitoramento.model.relatorio.Relatorio;
+import com.monitoramento.model.status.Status;
 import com.monitoramento.repository.camera.CameraRepository;
 import com.monitoramento.repository.camera_relatorio.CameraRelatorioRepository;
 import com.monitoramento.repository.dvr.DvrRepository;
@@ -33,6 +39,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -63,9 +70,13 @@ public class RelatorioServiceImpl implements RelatorioService {
     @Autowired
     private DvrRelatorioService dvrRelatorioService;
     @Autowired
+    private DvrRelatorioDTOMapper dvrRelatorioDTOMapper;
+    @Autowired
     private CameraRelatorioRepository cameraRelatorioRepository;
     @Autowired
     private CameraRelatorioService cameraRelatorioService;
+    @Autowired
+    private CameraRelatorioDTOMapper cameraRelatorioDTOMapper;
     @Autowired
     PagedResourcesAssembler<AllRelatorio> assembler;
 
@@ -153,6 +164,39 @@ public class RelatorioServiceImpl implements RelatorioService {
                 cameraRelatorioService.add(cameraRelatorio);
             }
         }
+    }
+
+    @Override
+    public void viewRelatorio(LocalDate dia) {
+        var status = statusRepository.findAll();
+        var quantidadeGeralDvr = new ArrayList<QuantidadeGeral>();
+        var quantidadeGeralCamera = new ArrayList<QuantidadeGeral>();
+
+        // Criar lista similar a doc do useChart do chakraui v3
+
+        for (Status s : status) {
+            var dvrRelatorio = dvrRelatorioRepository
+                    .findAllByStatusIdAndDia(s.getId(), dia).stream().map(dvrRelatorioDTOMapper).toList();
+            int totalDvr = dvrRelatorio.size();
+            quantidadeGeralDvr.add(new QuantidadeGeral(totalDvr, s.getNome()));
+
+
+            for (ViewDvrRelatorio dvr : dvrRelatorio) {
+
+            }
+
+
+            var cameraRelatorio = cameraRelatorioRepository
+                    .findAllByStatusIdAndDia(s.getId(), dia).stream().map(cameraRelatorioDTOMapper).toList();
+            var totalCamera = cameraRelatorio.size();
+            quantidadeGeralCamera.add(new QuantidadeGeral(totalCamera, s.getNome()));
+
+            for (ViewCameraRelatorio camera : cameraRelatorio) {
+
+            }
+
+        }
+
     }
 
     @Override

@@ -28,6 +28,9 @@ public interface DvrRelatorioRepository extends JpaRepository<DvrRelatorio, Long
     List<DvrRelatorio> findAllByStatusId(Long statusId);
 
     @Transactional(readOnly = true)
+    List<DvrRelatorio> findAllByStatusIdAndDia(Long statusId, LocalDate dia);
+
+    @Transactional(readOnly = true)
     List<DvrRelatorio> findAllByRelatorioId(Long relatorioId);
 
     @Transactional(readOnly = true)
