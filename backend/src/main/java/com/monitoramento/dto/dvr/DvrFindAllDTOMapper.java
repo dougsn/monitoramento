@@ -24,6 +24,8 @@ public class DvrFindAllDTOMapper implements Function<Dvr, FindAllDvr> {
         return new FindAllDvr(
                 data.getId(),
                 data.getNome(),
+                data.getStatus().getId(),
+                data.getStatus().getNome(),
                 cameras
         );
     }

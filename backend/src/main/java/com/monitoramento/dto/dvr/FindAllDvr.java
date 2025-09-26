@@ -15,5 +15,7 @@ import java.util.List;
 public class FindAllDvr implements Serializable {
     private Long value;
     private String label;
+    private Long statusIdDvr;
+    private String nomeStatus;
     private List<AllCamera> cameras;
 }

@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class AllCamera extends RepresentationModel<AllCamera> implements Serializable {
     private Long id;
     private String nome;
+    private Long statusId;
     private String nomeStatus;
     private String nomeDvr;
 }

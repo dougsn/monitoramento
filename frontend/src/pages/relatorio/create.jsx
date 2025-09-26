@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   Flex,
@@ -60,7 +61,7 @@ export const CreateRelatorio = () => {
   const [dvr, setDvr] = useState([]);
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState, control } = useForm({
+  const { register, handleSubmit, formState, control, reset } = useForm({
     resolver: yupResolver(CreateRelatorioFormSchema),
   });
   const handleCreateRelatorio = async (data) => {
@@ -146,7 +147,17 @@ export const CreateRelatorio = () => {
     try {
       const request = await api.get(`/api/dvr/find-all`);
       setDvr(request.data);
-      console.log(request.data);
+      const dadosFormatados = {
+        dvrs: request.data.map((dvr) => ({
+          dvrId: String(dvr.value),
+          statusIdDvr: String(dvr.statusIdDvr),
+          cameras: dvr.cameras.map((camera) => ({
+            cameraId: String(camera.id),
+            statusId: String(camera.statusId),
+          })),
+        })),
+      };
+      reset(dadosFormatados);
 
       setTimeout(() => {
         setIsLoading(false);
@@ -239,7 +250,7 @@ export const CreateRelatorio = () => {
                             name={`dvrs.[${i}].cameras.[${index}].statusId`}
                             label={`${c.nome}`}
                             items={status}
-                            placeholder="Selecione o status"
+                            placeholder={`${c.nomeStatus}`}
                             control={control}
                             formState={
                               formState.errors.dvrs?.[i]?.cameras?.[index]
@@ -276,7 +287,7 @@ export const CreateRelatorio = () => {
                       {...register(`dvrs.[${idx}].statusIdDvr`)}
                       name={`dvrs.[${idx}].statusIdDvr`}
                       items={status}
-                      placeholder="Selecione o status"
+                      placeholder={`${d.nomeStatus}`}
                       control={control}
                       formState={formState.errors.dvrs?.[idx]?.statusIdDvr}
                     />
