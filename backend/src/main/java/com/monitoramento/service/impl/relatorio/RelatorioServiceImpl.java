@@ -16,6 +16,7 @@ import com.monitoramento.repository.dvr.DvrRepository;
 import com.monitoramento.repository.dvr_relatorio.DvrRelatorioRepository;
 import com.monitoramento.repository.relatorio.RelatorioRepository;
 import com.monitoramento.repository.status.StatusRepository;
+import com.monitoramento.service.exceptions.BadRequestException;
 import com.monitoramento.service.exceptions.DataIntegratyViolationException;
 import com.monitoramento.service.exceptions.ObjectNotFoundException;
 import com.monitoramento.service.interfaces.camera.CameraService;
@@ -124,6 +125,9 @@ public class RelatorioServiceImpl implements RelatorioService {
             updateDvr.setDia(data.getDia());
             updateDvr.setIdStatus(statusDvr.getId());
             dvrService.update(updateDvr);
+
+            if (dvr.getCameras() == null)
+                throw new BadRequestException("Há dvrs que não possuem câmeras vinculadas, faça o vinculo para criar o relatório!");
 
             for (CameraRelatorio camera : dvr.getCameras()) {
                 var statusCamera = statusRepository.findById(camera.getStatusId())
