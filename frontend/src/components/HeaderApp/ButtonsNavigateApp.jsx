@@ -20,6 +20,9 @@ export const ButtonsNavigateApp = () => {
         <NavItem to="/camera" pathSegment="camera">
           Câmera
         </NavItem>
+        <NavItem to="/relatorio/criar" pathSegment="relatorio">
+          Relatório
+        </NavItem>
       </>
     );
   };
