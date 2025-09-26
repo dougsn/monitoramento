@@ -57,7 +57,7 @@ export const UpdateCamera = () => {
       const request = await api.put("/api/camera", newCamera);
       if (request.status === 200) {
         toaster.create({
-          title: "Camera atualizado com sucesso!",
+          title: "Câmera atualizada com sucesso!",
           type: "success",
         });
         setTimeout(() => {

@@ -51,7 +51,7 @@ export const CreateCamera = () => {
 
       if (request.status == 201) {
         toaster.create({
-          title: "Câmera criado com sucesso!",
+          title: "Câmera criada com sucesso!",
           type: "success",
           position: "top-right",
           duration: 3000,
